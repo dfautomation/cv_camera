@@ -1,0 +1,2 @@
+ACTION=="add", SUBSYSTEM=="video4linux", ATTRS{idVendor}=="1bcf", ATTRS{idProduct}=="0b15", ENV{ID_V4L_CAPABILITIES}==":capture:", GROUP="video", MODE:="0666", SYMLINK+="arducam_%s{serial}"
+ACTION=="add", SUBSYSTEM=="video4linux", ATTRS{idVendor}=="1bcf", ATTRS{idProduct}=="0b15", ENV{ID_V4L_CAPABILITIES}==":capture:", GROUP="video", MODE:="0666", SYMLINK+="arducam_usb_%s{busnum}_%s{devpath}"
