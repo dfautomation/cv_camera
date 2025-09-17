@@ -17,6 +17,8 @@ Capture::Capture(ros::NodeHandle &node, const std::string &topic_name,
       topic_name_(topic_name),
       buffer_size_(buffer_size),
       frame_id_(frame_id),
+      device_path_(""),
+      device_error_(false),
       info_manager_(node_, camera_name),
       capture_delay_(ros::Duration(node_.param("capture_delay", 0.0)))
 {
@@ -92,11 +94,7 @@ void Capture::open(int32_t device_id)
 
 void Capture::open(const std::string &device_path)
 {
-  cap_.open(device_path, cv::CAP_V4L);
-  if (!cap_.isOpened())
-  {
-    throw DeviceError("device_path " + device_path + " cannot be opened");
-  }
+  device_path_ = device_path;
   pub_ = it_.advertiseCamera(topic_name_, buffer_size_);
 
   loadCameraInfo();
@@ -130,6 +128,33 @@ void Capture::openFile(const std::string &file_path)
 
 bool Capture::capture()
 {
+  if (device_path_.size())
+  {
+    if (!pub_.getNumSubscribers())
+    {
+      if (cap_.isOpened())
+      {
+        cap_.release();
+      }
+      return false;
+    }
+    else if (!cap_.isOpened())
+    {
+      if (!cap_.open(device_path_, cv::CAP_V4L))
+      {
+        if (!device_error_)
+        {
+          device_error_ = true;
+          ROS_ERROR("device_path %s cannot be opened", device_path_.c_str());
+        }
+        return false;
+      }
+      setWidth(info_.width);
+      setHeight(info_.height);
+      device_error_ = false;
+    }
+  }
+
   if (cap_.read(bridge_.image))
   {
     ros::Time stamp = ros::Time::now() - capture_delay_;
@@ -158,6 +183,12 @@ bool Capture::capture()
         ROS_WARN_ONCE("Calibration resolution %dx%d does not match camera resolution %dx%d. "
                       "Use rescale_camera_info param for rescaling",
                       info_.width, info_.height, bridge_.image.cols, bridge_.image.rows);
+
+        if (device_path_.size())
+        {
+          cap_.release();
+          return false;
+        }
       }
     }
     info_.header.stamp = stamp;
@@ -165,6 +196,7 @@ bool Capture::capture()
 
     return true;
   }
+  cap_.release();
   return false;
 }
 

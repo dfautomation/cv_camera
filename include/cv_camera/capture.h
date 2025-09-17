@@ -190,6 +190,16 @@ private:
   image_transport::CameraPublisher pub_;
 
   /**
+   * @brief path of capture device.
+   */
+  std::string device_path_;
+
+  /**
+   * @brief capture device error.
+   */
+  bool device_error_;
+
+  /**
    * @brief capture device.
    */
   cv::VideoCapture cap_;
