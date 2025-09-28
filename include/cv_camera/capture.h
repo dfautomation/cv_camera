@@ -190,6 +190,11 @@ private:
   image_transport::CameraPublisher pub_;
 
   /**
+   * @brief camera_info publisher.
+   */
+  ros::Publisher info_pub_;
+
+  /**
    * @brief path of capture device.
    */
   std::string device_path_;

@@ -96,8 +96,12 @@ void Capture::open(const std::string &device_path)
 {
   device_path_ = device_path;
   pub_ = it_.advertiseCamera(topic_name_, buffer_size_);
+  info_pub_ = node_.advertise<sensor_msgs::CameraInfo>("camera_info", 1, true);
 
   loadCameraInfo();
+  info_ = info_manager_.getCameraInfo();
+  info_.header.frame_id = frame_id_;
+  info_pub_.publish(info_);
 }
 
 void Capture::open()
@@ -135,6 +139,8 @@ bool Capture::capture()
       if (cap_.isOpened())
       {
         cap_.release();
+        info_pub_ = node_.advertise<sensor_msgs::CameraInfo>("camera_info", 1, true);
+        info_pub_.publish(info_);
       }
       return false;
     }
@@ -151,6 +157,7 @@ bool Capture::capture()
       }
       setWidth(info_.width);
       setHeight(info_.height);
+      info_pub_.shutdown();
       device_error_ = false;
     }
   }
