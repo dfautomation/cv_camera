@@ -4,12 +4,12 @@ camera_name: arducam
 camera_matrix:
   rows: 3
   cols: 3
-  data: [437.81347, 0, 312.53219, 0, 435.08682, 241.06275, 0, 0, 1]
+  data: [441.21132, 0, 311.79909, 0, 439.61843, 239.43216, 0, 0, 1]
 distortion_model: plumb_bob
 distortion_coefficients:
   rows: 1
   cols: 5
-  data: [0.236085, -0.35019, -0.003602, -0.004654, 0]
+  data: [0.280176, -0.458568, 0.000456, -5.7e-05, 0]
 rectification_matrix:
   rows: 3
   cols: 3
@@ -17,7 +17,7 @@ rectification_matrix:
 projection_matrix:
   rows: 3
   cols: 4
-  data: [449.55292, 0, 307.58359, 0, 0, 452.34674, 239.05874, 0, 0, 0, 1, 0]
+  data: [451.32114, 0, 309.51825, 0, 0, 457.47571, 239.10399, 0, 0, 0, 1, 0]
 binning_x: 0
 binning_y: 0
 roi:
